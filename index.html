@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AX0000 Code Replacer</title>
+    <!-- Tailwind CSS for mobile-friendly styling -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-md bg-white rounded-xl shadow-md p-6 space-y-6">
+        <h1 class="text-xl font-bold text-slate-800 text-center">Picture Code Replacer</h1>
+        <p class="text-sm text-slate-600 text-center">Upload your file or text to automatically replace <strong>AX0000</strong> placeholders with found picture codes.</p>
+
+        <!-- Input Section -->
+        <div class="space-y-2">
+            <label class="block text-sm font-medium text-slate-700">Paste your content or data:</label>
+            <textarea id="inputText" rows="5" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm" placeholder="Example: Item code is AX0000..."></textarea>
+        </div>
+
+        <!-- Action Button -->
+        <button onclick="replaceCodes()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors cursor-pointer text-sm">
+            Replace AX0000 Codes
+        </button>
+
+        <!-- Output Section -->
+        <div class="space-y-2">
+            <label class="block text-sm font-medium text-slate-700">Result:</label>
+            <textarea id="outputText" rows="5" readonly class="w-full p-3 bg-slate-100 border border-slate-300 rounded-lg text-sm text-slate-700" placeholder="Result will appear here..."></textarea>
+        </div>
+
+        <!-- Download Button -->
+        <button onclick="downloadResult()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg transition-colors cursor-pointer text-sm">
+            Download Updated File
+        </button>
+    </div>
+
+    <script>
+        // Sample database mapping placeholders to picture codes
+        // You can expand this dictionary or fetch it from a backend server later
+        const pictureCodeDatabase = {
+            "AX0000": "IMG_9821_PROD",
+            "AX0001": "IMG_4412_PROD",
+            "AX0002": "IMG_7733_PROD"
+        };
+
+        function replaceCodes() {
+            let text = document.getElementById('inputText').value;
+
+            // Find and replace all instances of AX0000 (or other AX codes using regex)
+            // This regex matches AX followed by 4 digits
+            let updatedText = text.replace(/AX\d{4}/g, (match) => {
+                // If the code exists in our database, replace it; otherwise, keep it as is
+                return pictureCodeDatabase[match] || match;
+            });
+
+            document.getElementById('outputText').value = updatedText;
+        }
+
+        function downloadResult() {
+            const text = document.getElementById('outputText').value;
+            if (!text) {
+                alert("No content to download yet!");
+                return;
+            }
+
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'updated_codes.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
